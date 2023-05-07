@@ -59,12 +59,14 @@ CTestPingDlg::CTestPingDlg(CWnd* pParent /*=nullptr*/)
 void CTestPingDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT1, m_PingText);
 }
 
 BEGIN_MESSAGE_MAP(CTestPingDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CTestPingDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -153,3 +155,10 @@ HCURSOR CTestPingDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CTestPingDlg::OnBnClickedButton1()
+{
+	// TODO: добавьте свой код обработчика уведомлений
+	m_PingText.SetWindowTextA("Hello");
+}
