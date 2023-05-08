@@ -8,8 +8,15 @@
 #include "TestPingDlg.h"
 #include "afxdialogex.h"
 #include <fstream>
-#include <iostream>
 #include <string>
+#include <vector>
+#include <iostream>
+#include <boost/process.hpp>
+#include <boost/process/windows.hpp>
+#include <boost/locale.hpp>
+
+namespace bp = ::boost::process;
+namespace bl = ::boost::locale::conv;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -158,28 +165,56 @@ HCURSOR CTestPingDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CTestPingDlg::OnBnClickedButton1()
 {
-	setlocale(LC_ALL, "Russian");
+	//setlocale(LC_ALL, "Russian");
 
-	// TODO: добавьте свой код обработчика уведомлений
-	m_PingText.SetWindowTextA("Hello, World!");
-	char dir[255];
-	GetCurrentDirectoryA(255, dir);
+	//// TODO: добавьте свой код обработчика уведомлений
+	//m_PingText.SetWindowTextA("Hello, World!");
+	//char dir[255];
+	//GetCurrentDirectoryA(255, dir);
 
-	auto ret = system("C:\\Windows\\System32\\ping.exe yandex.ru >D:\\Temp\\ping_yandex.txt");
-	m_PingText.SetWindowTextA("Hello");
+	//auto ret = system("C:\\Windows\\System32\\ping.exe yandex.ru >D:\\Temp\\ping_yandex.txt");
+	//m_PingText.SetWindowTextA("Hello");
 
-	std::string line, full;
-	std::ifstream in("D:\\Temp\\ping_yandex.txt"); // окрываем файл для чтения
-	if (in.is_open())
+	//std::string line, full;
+	//std::ifstream in("D:\\Temp\\ping_yandex.txt"); // окрываем файл для чтения
+	//if (in.is_open())
+	//{
+	//	while (std::getline(in, line))
+	//	{
+	//		full += line;
+	//	}
+	//}
+	//m_PingText.SetWindowTextA(full.c_str());
+
+	bp::ipstream pipe_stream;
+	bp::child c("ping ya.ru", bp::std_out > pipe_stream);
+
+	std::string line, rez;
+
+	while (pipe_stream && std::getline(pipe_stream, line) && !line.empty())
+		rez += line;
+
+	boost::locale::generator generator;
+	std::locale locale = generator.generate("ru-RU.cp1251");
+
+	std::string str = rez;
+
+	for (size_t i = 0; i < str.size(); ++i)
 	{
-		while (std::getline(in, line))
-		{
-			full += line;
-		}
+		if ((unsigned char)str[i] == 0xF1) // для ё
+			str[i] = 0xB8;
+		else if ((unsigned char)str[i] == 0xF0) // для Ё
+			str[i] = 0xA8;
+		else if ((unsigned char)str[i] > 0x7F && (unsigned char)str[i] < 0xB0)
+			str[i] += 0x40;
+		else if ((unsigned char)str[i] > 0xDF && (unsigned char)str[i] < 0xF0)
+			str[i] += 0x10;
+		if (str[i] == '\r') str.insert(i+1, "\n");
 	}
-	m_PingText.SetWindowTextA(full.c_str());
+	
+	m_PingText.SetWindowTextA(str.c_str());
+	//c.wait();
+	
 }
