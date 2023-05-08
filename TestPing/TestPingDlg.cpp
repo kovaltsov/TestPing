@@ -160,5 +160,5 @@ HCURSOR CTestPingDlg::OnQueryDragIcon()
 void CTestPingDlg::OnBnClickedButton1()
 {
 	// TODO: добавьте свой код обработчика уведомлений
-	m_PingText.SetWindowTextA("Hello");
+	m_PingText.SetWindowTextA("Hello, World!");
 }
