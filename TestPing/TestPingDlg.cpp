@@ -7,6 +7,9 @@
 #include "TestPing.h"
 #include "TestPingDlg.h"
 #include "afxdialogex.h"
+#include <fstream>
+#include <iostream>
+#include <string>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -159,6 +162,24 @@ HCURSOR CTestPingDlg::OnQueryDragIcon()
 
 void CTestPingDlg::OnBnClickedButton1()
 {
+	setlocale(LC_ALL, "Russian");
+
 	// TODO: добавьте свой код обработчика уведомлений
 	m_PingText.SetWindowTextA("Hello, World!");
+	char dir[255];
+	GetCurrentDirectoryA(255, dir);
+
+	auto ret = system("C:\\Windows\\System32\\ping.exe yandex.ru >D:\\Temp\\ping_yandex.txt");
+	m_PingText.SetWindowTextA("Hello");
+
+	std::string line, full;
+	std::ifstream in("D:\\Temp\\ping_yandex.txt"); // окрываем файл для чтения
+	if (in.is_open())
+	{
+		while (std::getline(in, line))
+		{
+			full += line;
+		}
+	}
+	m_PingText.SetWindowTextA(full.c_str());
 }
