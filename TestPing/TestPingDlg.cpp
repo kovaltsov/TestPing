@@ -216,5 +216,5 @@ void CTestPingDlg::OnBnClickedButton1()
 	
 	m_PingText.SetWindowTextA(str.c_str());
 	//c.wait();
-	
+	//Проверка!!!!!!1
 }
